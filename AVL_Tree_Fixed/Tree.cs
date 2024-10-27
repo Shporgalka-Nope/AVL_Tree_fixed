@@ -22,39 +22,36 @@ namespace AVL_Tree_Fixed
 
         public void Insert(int data)
         {
-            Stack<Node> allAffected = new Stack<Node>();
-            FixBalance(Insert(data, head, allAffected));
+            Insert(data, head);
         }
-        private Stack<Node> Insert(int data, Node? current, Stack<Node> allAffected)
+        private Node Insert(int data, Node? current)
         {
-            Node newNode = new Node(data);
             if (head == null)
             {
-                head = newNode;
-                allAffected.Push(newNode);
-                return allAffected;
+                head = new Node(data);
+                return head;
             }
+            if (current == null) { return new Node(data); }
 
-            allAffected.Push(current);
-            if (data <= current.data) 
-            {
-                if (current.left != null) { allAffected = Insert(data, current.left, allAffected); }
-                else 
-                { 
-                    current.left = newNode;
-                    allAffected.Push(newNode);
-                }
-            }
-            else 
-            {
-                if (current.right != null) { allAffected = Insert(data, current.right, allAffected); }
-                else 
-                { 
-                    current.right = newNode;
-                    allAffected.Push(newNode);
-                }
-            }
-            return allAffected;
+            if (data <= current.data) { current.left = Insert(data, current.left); }
+            else { current.right = Insert(data, current.right); }
+
+            current.height = 1 + Math.Max(GetHeight(current.left), GetHeight(current.right));
+            
+            int balance = GetBalance(current);
+            if (balance > 1) { return RightRotation(current); }
+            else if (balance < -1) { return LeftRotation(current); }
+
+            return current;
+        }
+        private static int GetHeight(Node node)
+        {
+            if (node == null) { return 0; }
+            return node.height;
+        }
+        private static int GetBalance(Node node)
+        {
+            return GetHeight(node.left) - GetHeight(node.right);
         }
 
         public void Print()
@@ -70,64 +67,29 @@ namespace AVL_Tree_Fixed
             return output;
         }
 
-        private void FixBalance(Stack<Node> allAffected)
+        private Node LeftRotation(Node root)
         {
-            Node? node = null;
-            Node? parent = null;
-            int count = 0;
-            while (allAffected.Count != 0)
-            {
-                node = allAffected.Pop();
-                if (node != head) { allAffected.TryPeek(out parent); }
-                node.height = count;
-                int bF = node.GetBalance();
-                if (bF <= -2) 
-                { 
-                    LeftRotation(node, parent);
-                    continue;
-                }
-                else if (bF >= 2) 
-                { 
-                    RightRotation(node, parent);
-                    continue;
-                }
-                count++;
-            }
-        }
-        private void LeftRotation(Node root, Node? parent)
-        {
-            Stack<Node> allAffected = new Stack<Node>();
             Node? rRight = root.right;
             root.right = rRight.left;
             rRight.left = root;
-            allAffected.Push(rRight);
-            allAffected.Push(root);
-            if (root == head) 
-            { 
-                head = rRight;
-                FixBalance(allAffected);
-                return;
-            }
-            if (parent.left == root) { parent.left = rRight; }
-            else { parent.right = rRight; }
-            FixBalance(allAffected);
+            if(root == head) { head = rRight; }
+
+            root.height = 1 + Math.Max(GetHeight(root.left), GetHeight(root.right));
+            rRight.height = 1 + Math.Max(GetHeight(rRight.left), GetHeight(rRight.right));
+
+            return rRight;
         }
-        private void RightRotation(Node root, Node parent)
+        private Node RightRotation(Node root)
         {
-            Stack<Node> allAffected = new Stack<Node>();
             Node? rLeft = root.left;
             root.left = rLeft.right;
             rLeft.right = root;
-            allAffected.Push(rLeft);
-            if (root == head) 
-            { 
-                head = rLeft;
-                FixBalance(allAffected);
-                return;
-            }
-            if (parent.left == root) { parent.left = rLeft; }
-            else { parent.right = rLeft; }
-            FixBalance(allAffected);
+            if(head == root) {  head = rLeft; }
+            
+            root.height = GetHeight(root);
+            rLeft.height = GetHeight(rLeft);
+
+            return rLeft;
         }
     }
 
@@ -136,23 +98,11 @@ namespace AVL_Tree_Fixed
         public int data;
         public Node? left;
         public Node? right;
-
-        public int height = 0;
-        public int balFac;
+        public int height = 1;
 
         public Node(int d)
         {
             data = d;
-        }
-
-        public int GetBalance()
-        {
-            int leftH = 0;
-            int rghtH = 0;
-            if (left != null ) { leftH = 1 + left.height; }
-            if (right != null) { rghtH = 1 + right.height; }
-            balFac = leftH - rghtH;
-            return balFac;
         }
     }
 }
