@@ -39,8 +39,20 @@ namespace AVL_Tree_Fixed
             current.height = 1 + Math.Max(GetHeight(current.left), GetHeight(current.right));
             
             int balance = GetBalance(current);
-            if (balance > 1) { return RightRotation(current); }
-            else if (balance < -1) { return LeftRotation(current); }
+            if (balance > 1) {
+                if (GetBalance(current.left) < 0)
+                {
+                    current.left = LeftRotation(current.left);
+                }
+                return RightRotation(current);
+            }
+            else if (balance < -1) 
+            { 
+                if (GetBalance(current.right) > 0)
+                {
+                    current.right = RightRotation(current.right);
+                }
+                return LeftRotation(current); }
 
             return current;
         }
@@ -68,14 +80,15 @@ namespace AVL_Tree_Fixed
                     if (current.left != null) { temp = current.left; }
                     else { temp = current.right; }
 
-                    if (temp == null) { return null; }
-                    else { return temp; }
+                    return temp;
                 }
                 else
                 {
-                    int tempData = FindMin(current).data;
-                    DeleteMin(current);
+                    int tempData = FindMin(current.right).data;
+                    //if (FindMin(current).data == current.left.data) { current.left = null; }
+                    //if (FindMin(current).data == current.right.data) { current.right = null; }
                     current.data = tempData;
+                    current.right = Delete(tempData, current.right);
                     return current;
                 }
 
@@ -134,10 +147,9 @@ namespace AVL_Tree_Fixed
             root.left = rLeft.right;
             rLeft.right = root;
             if(head == root) {  head = rLeft; }
-            
-            root.height = GetHeight(root);
-            rLeft.height = GetHeight(rLeft);
 
+            root.height = 1 + Math.Max(GetHeight(root.left), GetHeight(root.right));
+            rLeft.height = 1 + Math.Max(GetHeight(rLeft.left), GetHeight(rLeft.right));
             return rLeft;
         }
     }
