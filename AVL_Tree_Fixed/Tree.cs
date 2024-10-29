@@ -54,6 +54,55 @@ namespace AVL_Tree_Fixed
             return GetHeight(node.left) - GetHeight(node.right);
         }
 
+        public void Delete(int data)
+        {
+            Delete(data, head);
+        }
+        private Node Delete(int data, Node current)
+        {
+            if (data == current.data) 
+            {
+                if (current.left == null || current.right == null)
+                {
+                    Node temp;
+                    if (current.left != null) { temp = current.left; }
+                    else { temp = current.right; }
+
+                    if (temp == null) { return null; }
+                    else { return temp; }
+                }
+                else
+                {
+                    int tempData = FindMin(current).data;
+                    DeleteMin(current);
+                    current.data = tempData;
+                    return current;
+                }
+
+            }
+            else
+            {
+                if (data < current.data) { current.left = Delete(data, current.left); }
+                else { current.right = Delete(data, current.right); }
+            }
+
+            current.height = 1 + Math.Max(GetHeight(current.left), GetHeight(current.right));
+            int balance = GetBalance(current);
+            if (balance > 1) { return RightRotation(current); }
+            else if (balance < -1) { return LeftRotation(current); }
+            return current;
+        }
+        private static Node FindMin(Node root)
+        {
+            if (root.left == null) { return root; }
+            else { return FindMin(root.left); }
+        }
+        private static Node DeleteMin(Node root)
+        {
+            if (root.left == null) { return root.right; }
+            else { return DeleteMin(root.left); }
+        }
+
         public void Print()
         {
             Console.WriteLine(Print(head));
