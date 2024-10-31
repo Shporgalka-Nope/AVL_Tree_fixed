@@ -20,6 +20,11 @@ namespace AVL_Tree_Fixed
     {
         public Node head;
 
+        public Tree()
+        {
+
+        }
+
         public void Insert(int data)
         {
             Insert(data, head);
@@ -33,6 +38,7 @@ namespace AVL_Tree_Fixed
             }
             if (current == null) { return new Node(data); }
 
+            if (data == current.data) {  return current; }
             if (data <= current.data) { current.left = Insert(data, current.left); }
             else { current.right = Insert(data, current.right); }
 
@@ -128,6 +134,19 @@ namespace AVL_Tree_Fixed
             output += root.data;
             return output;
         }
+        public static Stack<Node> GetAllNodes(Tree tree)
+        {
+            Stack<Node> nodes = new Stack<Node>();
+            GetAllNodes(tree.head, nodes);
+            return nodes;
+        }
+        private static Node GetAllNodes(Node current, Stack<Node> nodes)
+        {
+            if (current.left != null) { GetAllNodes(current.left, nodes); }
+            if (current.right != null) { GetAllNodes(current.right, nodes); }
+            nodes.Push(current);
+            return current;
+        } 
 
         private Node LeftRotation(Node root)
         {
@@ -151,6 +170,58 @@ namespace AVL_Tree_Fixed
             root.height = 1 + Math.Max(GetHeight(root.left), GetHeight(root.right));
             rLeft.height = 1 + Math.Max(GetHeight(rLeft.left), GetHeight(rLeft.right));
             return rLeft;
+        }
+
+        public static Tree operator +(Tree original, int value)
+        {
+            Tree newTree = new Tree();
+            Stack<Node> nodes = GetAllNodes(original);
+            foreach(Node node in nodes)
+            {
+                newTree.Insert(node.data + value);
+            }
+            return newTree;
+        }
+        public static Tree operator +(Tree treeOne, Tree treeTwo)
+        {
+            Node min = FindMin(treeTwo.head);
+            Node max = treeOne.head;
+            while (max.right != null)
+            {
+                max = max.right;
+            }
+            if (max.data < min.data) { return TreePlus_Two(treeOne, treeTwo); }
+            else { return TreePlus_One(treeOne, treeTwo); }
+        }
+
+        private static Tree TreePlus_One(Tree treeOne, Tree treeTwo)
+        {
+            Tree newTree = new Tree();
+            Stack<Node> nodes = StackPlus(GetAllNodes(treeOne), GetAllNodes(treeTwo));
+            foreach (Node node in nodes)
+            {
+                newTree.Insert(node.data);
+            }
+            return newTree;
+        }
+        private static Tree TreePlus_Two(Tree treeOne, Tree treeTwo) 
+        {
+            Tree newTree = new Tree();
+            Stack<Node> nodes = StackPlus(GetAllNodes(treeOne), GetAllNodes(treeTwo));
+            foreach (Node node in nodes)
+            {
+                newTree.Insert(node.data);
+            }
+            return newTree;
+        }
+        //Unholy creation
+        public static Stack<Node> StackPlus(Stack<Node> firstStack, Stack<Node> secondStack) 
+        { 
+            foreach(Node node in firstStack)
+            {
+                secondStack.Push(node);
+            }
+            return secondStack;
         }
     }
 
