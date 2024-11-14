@@ -116,10 +116,19 @@ namespace AVL_Tree_Fixed
             if (root.left == null) { return root; }
             else { return FindMin(root.left); }
         }
+
         private static Node DeleteMin(Node root)
         {
             if (root.left == null) { return root.right; }
             else { return DeleteMin(root.left); }
+        }
+        public static Node DeleteMax(Node root)
+        {
+            Node selected;
+            if (root.right != null) { selected = DeleteMax(root.right); }
+            else { return root; }
+            root.right = null;
+            return selected;
         }
 
         public void Print()
@@ -206,13 +215,58 @@ namespace AVL_Tree_Fixed
         }
         private static Tree TreePlus_Two(Tree treeOne, Tree treeTwo) 
         {
-            Tree newTree = new Tree();
-            Stack<Node> nodes = StackPlus(GetAllNodes(treeOne), GetAllNodes(treeTwo));
-            foreach (Node node in nodes)
+            Tree leftTree;
+            Tree rightTree;
+            if (treeOne.head.height <= treeTwo.head.height)
             {
-                newTree.Insert(node.data);
+                leftTree = treeOne;
+                rightTree = treeTwo;
+            } 
+            else
+            {
+                leftTree = treeTwo;
+                rightTree = treeOne;
             }
-            return newTree;
+
+            if (leftTree.head == null) { return rightTree; }
+            if (rightTree.head == null) { return leftTree; }
+
+            Node leftDock = leftTree.head;
+            Node parent = leftDock;
+            while (leftDock.right != null)
+            {
+                parent = leftDock;
+                leftDock = leftDock.right;
+            }
+            if (parent.left == leftDock) { parent.left = null; }
+            else { parent.right = null; }
+
+            Node rightDock = rightTree.head.left;
+            parent = rightDock;
+            while (rightDock.height != leftTree.head.height)
+            {
+                parent = rightDock;
+                if (rightDock.left.height == rightDock.height-1) { rightDock = rightDock.left; }
+                else { rightDock = rightDock.right; }
+            }
+            if (parent.left == rightDock) 
+            { 
+                Tree newTree = new Tree();
+                newTree.head = leftDock;
+                newTree.head.left = treeOne.head;
+                newTree.head.right = rightDock;
+                parent.left = newTree.head;
+            }
+            else 
+            {
+                Tree newTree = new Tree();
+                newTree.head = leftDock;
+                newTree.head.left = treeOne.head;
+                newTree.head.right = rightDock;
+                parent.right = newTree.head;
+            }
+
+            return rightTree;
         }
         //Unholy creation
         public static Stack<Node> StackPlus(Stack<Node> firstStack, Stack<Node> secondStack) 
