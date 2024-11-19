@@ -231,42 +231,55 @@ namespace AVL_Tree_Fixed
             if (leftTree.head == null) { return rightTree; }
             if (rightTree.head == null) { return leftTree; }
 
+            //Left tree max edge search
             Node leftDock = leftTree.head;
-            Node parent = leftDock;
             while (leftDock.right != null)
             {
-                parent = leftDock;
                 leftDock = leftDock.right;
             }
-            if (parent != leftDock) { leftTree.Delete(leftDock.data); }
+            if (leftTree.head != leftDock) { leftTree.Delete(leftDock.data); }
 
-            Node rightDock = rightTree.head.left;
-            parent = rightDock;
-            while (rightDock.height != leftTree.head.height)
+            //Right tree same-height search on the left side
+            Node rightDock = rightTree.head;
+            Node parent = rightDock;
+            int targetHeight = leftTree.head.height;
+            while (rightDock.height != targetHeight)
             {
-                parent = rightDock;
-                if (rightDock.left.height == rightDock.height - 1) { rightDock = rightDock.left; }
-                else { rightDock = rightDock.right; }
+                if (rightDock == rightTree.head)
+                {
+                    if (rightDock.left.height == targetHeight) 
+                    { 
+                        rightDock.left = MakeNewTree(leftDock, leftTree, rightDock.left).head;
+                        break;
+                    }
+                    rightDock = rightDock.left;
+                    continue;
+                }
+                if (rightDock.left.height == targetHeight)
+                {
+                    rightDock.left = MakeNewTree(leftDock, leftTree, rightDock.left).head;
+                    break;
+                }
+                else if (rightDock.right.height == targetHeight)
+                {
+                    rightDock.right = MakeNewTree(leftDock, leftTree, rightDock.right).head;
+                    break;
+                }
+                else if (rightDock.left.height == rightDock.height - 1) { rightDock = rightDock.left; }
+                else {  rightDock = rightDock.right; }
             }
-            //if (parent.left == rightDock) 
-            //{ 
-            //    Tree newTree = new Tree();
-            //    newTree.head = leftDock;
-            //    newTree.head.left = treeOne.head;
-            //    newTree.head.right = rightDock;
-            //    parent.left = newTree.head;
-            //}
-            //else 
-            //{
-            //    Tree newTree = new Tree();
-            //    newTree.head = leftDock;
-            //    newTree.head.left = treeOne.head;
-            //    newTree.head.right = rightDock;
-            //    parent.right = newTree.head;
-            //}
-
             return rightTree;
         }
+
+        private static Tree MakeNewTree(Node x, Tree t1, Node p)
+        {
+            Tree newTree = new Tree();
+            newTree.head = x;
+            newTree.head.left = t1.head;
+            newTree.head.right = p;
+            return newTree;
+        }
+
         //Unholy creation
         public static Stack<Node> StackPlus(Stack<Node> firstStack, Stack<Node> secondStack) 
         { 
