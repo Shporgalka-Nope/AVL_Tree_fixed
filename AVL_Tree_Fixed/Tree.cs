@@ -241,33 +241,24 @@ namespace AVL_Tree_Fixed
 
             //Right tree same-height search on the left side
             Node rightDock = rightTree.head;
-            Node parent = rightDock;
             int targetHeight = leftTree.head.height;
             while (rightDock.height != targetHeight)
             {
-                if (rightDock == rightTree.head)
-                {
-                    if (rightDock.left.height == targetHeight) 
-                    { 
-                        rightDock.left = MakeNewTree(leftDock, leftTree, rightDock.left).head;
-                        break;
-                    }
-                    rightDock = rightDock.left;
-                    continue;
-                }
                 if (rightDock.left.height == targetHeight)
                 {
                     rightDock.left = MakeNewTree(leftDock, leftTree, rightDock.left).head;
-                    break;
+                    return rightTree;
                 }
                 else if (rightDock.right.height == targetHeight)
                 {
                     rightDock.right = MakeNewTree(leftDock, leftTree, rightDock.right).head;
-                    break;
+                    return rightTree;;
                 }
                 else if (rightDock.left.height == rightDock.height - 1) { rightDock = rightDock.left; }
                 else {  rightDock = rightDock.right; }
             }
+            rightTree.head = MakeNewTree(leftDock, leftTree, rightTree.head).head;
+
             return rightTree;
         }
 
