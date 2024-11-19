@@ -238,33 +238,32 @@ namespace AVL_Tree_Fixed
                 parent = leftDock;
                 leftDock = leftDock.right;
             }
-            if (parent.left == leftDock) { parent.left = null; }
-            else { parent.right = null; }
+            if (parent != leftDock) { leftTree.Delete(leftDock.data); }
 
             Node rightDock = rightTree.head.left;
             parent = rightDock;
             while (rightDock.height != leftTree.head.height)
             {
                 parent = rightDock;
-                if (rightDock.left.height == rightDock.height-1) { rightDock = rightDock.left; }
+                if (rightDock.left.height == rightDock.height - 1) { rightDock = rightDock.left; }
                 else { rightDock = rightDock.right; }
             }
-            if (parent.left == rightDock) 
-            { 
-                Tree newTree = new Tree();
-                newTree.head = leftDock;
-                newTree.head.left = treeOne.head;
-                newTree.head.right = rightDock;
-                parent.left = newTree.head;
-            }
-            else 
-            {
-                Tree newTree = new Tree();
-                newTree.head = leftDock;
-                newTree.head.left = treeOne.head;
-                newTree.head.right = rightDock;
-                parent.right = newTree.head;
-            }
+            //if (parent.left == rightDock) 
+            //{ 
+            //    Tree newTree = new Tree();
+            //    newTree.head = leftDock;
+            //    newTree.head.left = treeOne.head;
+            //    newTree.head.right = rightDock;
+            //    parent.left = newTree.head;
+            //}
+            //else 
+            //{
+            //    Tree newTree = new Tree();
+            //    newTree.head = leftDock;
+            //    newTree.head.left = treeOne.head;
+            //    newTree.head.right = rightDock;
+            //    parent.right = newTree.head;
+            //}
 
             return rightTree;
         }
