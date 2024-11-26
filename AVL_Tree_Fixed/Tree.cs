@@ -200,6 +200,10 @@ namespace AVL_Tree_Fixed
                 max = max.right;
             }
             if (max.data < min.data) { return TreePlus_Two(treeOne, treeTwo); }
+
+            min = FindMin(treeOne.head);
+            max = treeTwo.head;
+            if (max.data < min.data) { return TreePlus_Two(treeTwo, treeOne); }
             else { return TreePlus_One(treeOne, treeTwo); }
         }
 
@@ -215,9 +219,9 @@ namespace AVL_Tree_Fixed
         }
         private static Tree TreePlus_Two(Tree treeOne, Tree treeTwo) 
         {
-            Tree leftTree;
-            Tree rightTree;
-            if (treeOne.head.height <= treeTwo.head.height)
+            Tree leftTree = treeOne;
+            Tree rightTree = treeTwo;
+            /*if (treeOne.head.height <= treeTwo.head.height)
             {
                 leftTree = treeOne;
                 rightTree = treeTwo;
@@ -226,7 +230,7 @@ namespace AVL_Tree_Fixed
             {
                 leftTree = treeTwo;
                 rightTree = treeOne;
-            }
+            }*/
 
             if (leftTree.head == null) { return rightTree; }
             if (rightTree.head == null) { return leftTree; }
@@ -252,10 +256,9 @@ namespace AVL_Tree_Fixed
                 else if (rightDock.right.height == targetHeight)
                 {
                     rightDock.right = MakeNewTree(leftDock, leftTree, rightDock.right).head;
-                    return rightTree;;
+                    return rightTree;
                 }
-                else if (rightDock.left.height == rightDock.height - 1) { rightDock = rightDock.left; }
-                else {  rightDock = rightDock.right; }
+                else { rightDock = rightDock.left; }
             }
             rightTree.head = MakeNewTree(leftDock, leftTree, rightTree.head).head;
 

@@ -13,6 +13,8 @@
             newTree.Insert(4);
             newTree.Insert(5);
             newTree.Insert(6);
+            newTree.Insert(7);
+            newTree.Insert(8);
 
             Tree plusTree = tree + newTree;
             plusTree.Print();
