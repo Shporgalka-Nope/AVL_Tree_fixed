@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 using System.Security;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
@@ -221,16 +222,6 @@ namespace AVL_Tree_Fixed
         {
             Tree leftTree = treeOne;
             Tree rightTree = treeTwo;
-            /*if (treeOne.head.height <= treeTwo.head.height)
-            {
-                leftTree = treeOne;
-                rightTree = treeTwo;
-            } 
-            else
-            {
-                leftTree = treeTwo;
-                rightTree = treeOne;
-            }*/
 
             if (leftTree.head == null) { return rightTree; }
             if (rightTree.head == null) { return leftTree; }
@@ -244,25 +235,27 @@ namespace AVL_Tree_Fixed
             if (leftTree.head != leftDock) { leftTree.Delete(leftDock.data); }
 
             //Right tree same-height search on the left side
-            Node rightDock = rightTree.head;
             int targetHeight = leftTree.head.height;
-            while (rightDock.height != targetHeight)
-            {
-                if (rightDock.left.height == targetHeight)
-                {
-                    rightDock.left = MakeNewTree(leftDock, leftTree, rightDock.left).head;
-                    return rightTree;
-                }
-                else if (rightDock.right.height == targetHeight)
-                {
-                    rightDock.right = MakeNewTree(leftDock, leftTree, rightDock.right).head;
-                    return rightTree;
-                }
-                else { rightDock = rightDock.left; }
-            }
-            rightTree.head = MakeNewTree(leftDock, leftTree, rightTree.head).head;
+            
+            return FindPlace(leftTree, rightTree, leftDock, targetHeight);
+        }
 
+        public static Tree FindPlace(Tree leftTree, Tree rightTree, Node x, int height)
+        {
+            rightTree.head = _FindPlace(leftTree, x, rightTree.head, height);
             return rightTree;
+        }
+
+        private static Node _FindPlace(Tree leftTree, Node x, Node root, int height)
+        {
+            if (root.height != height) { root.left = _FindPlace(leftTree, x, root.left, height); }
+            else
+            {
+                x.left = leftTree.head;
+                x.right = root;
+                root = x;
+            }
+            return root;
         }
 
         private static Tree MakeNewTree(Node x, Tree t1, Node p)
