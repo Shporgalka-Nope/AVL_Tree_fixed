@@ -248,7 +248,7 @@ namespace AVL_Tree_Fixed
 
         private static Node _FindPlace(Tree leftTree, Node x, Node root, int height)
         {
-            if (root.height != height) { root.left = _FindPlace(leftTree, x, root.left, height); }
+            if (root.height > height) { root.left = _FindPlace(leftTree, x, root.left, height); }
             else
             {
                 x.left = leftTree.head;
@@ -258,14 +258,14 @@ namespace AVL_Tree_Fixed
             return root;
         }
 
-        private static Tree MakeNewTree(Node x, Tree t1, Node p)
-        {
-            Tree newTree = new Tree();
-            newTree.head = x;
-            newTree.head.left = t1.head;
-            newTree.head.right = p;
-            return newTree;
-        }
+        //private static Tree MakeNewTree(Node x, Tree t1, Node p)
+        //{
+        //    Tree newTree = new Tree();
+        //    newTree.head = x;
+        //    newTree.head.left = t1.head;
+        //    newTree.head.right = p;
+        //    return newTree;
+        //}
 
         //Unholy creation
         public static Stack<Node> StackPlus(Stack<Node> firstStack, Stack<Node> secondStack) 
